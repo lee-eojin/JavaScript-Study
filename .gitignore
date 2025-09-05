@@ -6,3 +6,10 @@
 
 # IDE files
 .vscode/
+
+# Cache and temporary files
+.temp
+.cache
+
+# Log files
+*.log
