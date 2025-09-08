@@ -64,4 +64,12 @@
     사용자가 확인 버튼을 누르면 true, 그 외의 경우는 false를 반환
     let isBoss = confirm("당신이 주인인가요?");
     alert( isBoss ); // 확인 버튼을 눌렀다면 true가 출력됨.
+
+9.  nullish 병합 연산자 ??를 사용하면 짧은 문법으로 여러 피연산자 중 그 값이 확정되어있는 변수를 찾을 수 있다.
+    a ?? b 의 평가 결과는 다음과 같다;
+    a가 null도 아니고 undefined도 아니면 a
+    그 외의 경우는 b
+    x = (a !== null && a !== undefined) ? a : b;
+
     
+
