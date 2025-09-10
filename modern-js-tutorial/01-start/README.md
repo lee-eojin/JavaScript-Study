@@ -87,5 +87,52 @@
         alert (i);
         i++;
     }
-    반복문 본문이 한 번 실행되는 것을 반복(iteration, 이터레이션) 이라고 부른다. 위 예시에선 반복문이 세 번의 이터레이션을 만듭니다. i++ 가 없었다면 이론적으로 반복문이 영원히 반복되었을 겁니다.
+    반복문 본문이 한 번 실행되는 것을 반복(iteration, 이터레이션)이라고 부른다. 위 예시에선 반복문이 세 번의 이터레이션을 만든다. i++ 가 없었다면 이론적으로 반복문이 영원히 반복되었을 것이다.
+
+11. switch 문
+    switch 문을 사용한 비교법은 특정 변수를 다양한 상황에서 비교할 수 있게 해준다.
+    그리고 코드 자체가 비교 상황을 잘 설명한다는 장점도 있다.
+
+    const dayOfWeek = "월요일";
+    let message;
+
+    switch (dayOfWeek) {
+    case "월요일":
+        message = "한 주의 시작, 화이팅!";
+        break;
+    case "금요일":
+        message = "불금! 주말을 즐길 준비하세요!";
+        break;
+    case "토요일":
+    case "일요일":
+        message = "즐거운 주말 보내세요!";
+        break;
+    default:
+        message = "평범한 하루네요.";
+    }
+
+    console.log(message); // 출력: 한 주의 시작, 화이팅!
+
+    여러개의 case문은 한데 묶을 수 있다.
+    let a = 3;
+
+    switch (a) {
+    case 4:
+        alert('계산이 맞습니다!');
+        break;
+
+    case 3: // (*) 두 case문을 묶음
+    case 5:
+        alert('계산이 틀립니다!');
+        alert("수학 수업을 다시 들어보는걸 권유 드립니다.");
+        break;
+
+    default:
+        alert('계산 결과가 이상하네요.');
+    }
+
+12. 함수는 프로그램을 구성하는 주요 '구성 요소(building block)이다.
+    함수를 이용하면 중복 없이 유사한 동작을 하는 코드를 여러 번 호출할 수 있다.
+
+    함수 선언(function delacration) 방식을 사용하여 함수를 만든다.
     
