@@ -90,9 +90,11 @@
     반복문 본문이 한 번 실행되는 것을 반복(iteration, 이터레이션)이라고 부른다. 위 예시에선 반복문이 세 번의 이터레이션을 만든다. i++ 가 없었다면 이론적으로 반복문이 영원히 반복되었을 것이다.
 
 11. switch 문
+    복수의 if 조건문은 switch문으로 바꿀 수 있다.
     switch 문을 사용한 비교법은 특정 변수를 다양한 상황에서 비교할 수 있게 해준다.
     그리고 코드 자체가 비교 상황을 잘 설명한다는 장점도 있다.
 
+    switch 문은 하나 이상의 case 문으로 구성된다. 대개 default 문도 있지만, 이는 필수는 아니다.
     const dayOfWeek = "월요일";
     let message;
 
@@ -112,6 +114,8 @@
     }
 
     console.log(message); // 출력: 한 주의 시작, 화이팅!
+    
+    ---
 
     여러개의 case문은 한데 묶을 수 있다.
     let a = 3;
@@ -134,4 +138,43 @@
 12. 함수는 프로그램을 구성하는 주요 '구성 요소(building block)이다.
     함수를 이용하면 중복 없이 유사한 동작을 하는 코드를 여러 번 호출할 수 있다.
 
-    함수 선언(function delacration) 방식을 사용하여 함수를 만든다..
+    함수 선언(function delacration) 방식을 사용하여 함수를 만든다.
+
+13. function 키워드, 함수 이름, 괄호로 둘러싼 매개변수를 차례로 써주면 함수를 선언할 수 있다.
+
+    function name(parameter1, parameter2, ... parameterN) {
+    // 함수 본문
+    }
+
+    또한, 새롭게 정의한 함수는 함수 이름 옆에 괄호를 붙여 호출할 수 있다.
+    function showMessage() {
+    alert( '안녕하세요!' );
+    }
+
+    showMessage();
+    showMessage();
+
+    이렇게 하면 showMessage를 두 번 호출했으므로 얼럿 창이 두 번 뜬다.
+
+14. 함수 내에서 선언한 변수인 지역 변수(local variable)는 함수 안에서만 접근할 수 있다.
+
+15. 한수 내부에서 함수 외부의 변수인 외부 변수(outer variable)에 접근할 수 있다.
+    마찬가지로 수정도 가능하다.
+
+    하지만 외부 변수는 지역 변수가 없는 경우에만 사용할 수 있다.
+    함수 외부에 선언된 변수는 전역 변수(global variable) 라고 부른다.
+
+    변수는 연관되는 함수 내에 선언하고, 전역 변수는 되도록 사용하지 않는 것이 좋다.
+    비교적 근래에 작성된 코드들은 대부분 전역변수를 사용하지 않거나 최소한으로만 사용한다.
+    다만 프로젝트 전반에서 사용되는 데이터는 전역 변수에 저장하는 것이 유용한 경우도 있으니 이 점을 알아두면 좋다.
+
+16. 매개변수 (parameter)를 이용하면 임의의 데이터를 함수 안에 전달할 수 있다.
+    매개변수는 인자(parameter) 라고 불리기도 한다.
+
+    아래 예시에서 함수 showMessage는 매개변수 from과 text를 가진다.
+    function showMessage(from, text) { // 인자: from, text
+    alert(from + ': ' + text);
+    }
+
+    showMessage('Ann', 'Hello!'); // Ann: Hello! (*)
+    showMessage('Ann', "What's up?"); // Ann: What's up? (**)   
