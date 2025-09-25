@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>저등어 정산</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+                Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f4f4f9;
+        }
+        .container {
+            text-align: center;
+            padding: 40px;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 400px;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .input-group {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        input[type="text"] {
+            width: 60%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px 0 0 6px;
+            font-size: 16px;
+        }
+        button {
+            padding: 12px 20px;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 0 6px 6px 0;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #showAll {
+            background-color: #6c757d;
+            border-radius: 6px;
+            margin-left: 8px;
+        }
+        #showAll:hover {
+            background-color: #5a6268;
+        }
+        #result {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #333;
+            min-height: 50px;
+            padding: 10px;
+        }
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>저등어 정산 조회</h1>
+        <div class="input-group">
+            <input type="text" id="nameInput" placeholder="이름을 입력하세요">
+            <button onclick="getAmount()">확인</button>
+            <button id="showAll" onclick="listAll()">전체 보기</button>
+        </div>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        const STEP1_TOTAL = 183_800;
+        const STEP1 = ["어진", "재욱", "준호", "자원"];
+        const STEP2_TOTAL = 756_940;
+        const STEP2 = ["어진", "재욱", "준호", "자원", "준엽"];
+        const EXTRA = { 어진: 18_000, 재욱: 18_000, 준호: 18_000, 자원: 27_000, 준엽: 18_000 };
+        const STEP1_EXTRA_COST = 24_600;
+
+        const share1 = STEP1_TOTAL / STEP1.length;
+        const share2 = STEP2_TOTAL / STEP2.length;
+        const add1Split = STEP1_EXTRA_COST / STEP1.length;
+
+        const NAMES = Array.from(new Set([...STEP1, ...STEP2]));
+
+        function computeTotals() {
+            const totals = {};
+            for (const name of NAMES) {
+                let t = 0;
+                if (STEP1.includes(name)) t += share1 + add1Split;
+                if (STEP2.includes(name)) t += share2;
+                t += EXTRA[name] ?? 0;
+                totals[name] = Math.round(t); 
+            }
+            return totals;
+        }
+
+        function krw(n) {
+            return n.toLocaleString("ko-KR") + "원";
+        }
+
+        function getTotalByName(name) {
+            const totals = computeTotals();
+            if (!NAMES.includes(name)) {
+                const hint = `멤버: ${NAMES.join(", ")}`;
+                return { ok: false, message: `이름만 치셈. (${hint})` };
+            }
+            return { ok: true, name, total: totals[name] };
+        }
+
+        // --- 수정된 부분 ---
+        // 웹페이지의 요소(DOM)를 조작하는 함수
+        function getAmount() {
+            const nameInput = document.getElementById("nameInput");
+            const resultDiv = document.getElementById("result");
+            const name = nameInput.value.trim();
+
+            if (!name) {
+                resultDiv.innerHTML = "이름을 입력해주세요.";
+                return;
+            }
+
+            const r = getTotalByName(name);
+            if (!r.ok) {
+                resultDiv.innerHTML = r.message;
+            } else {
+                resultDiv.innerHTML = `<strong>${r.name}</strong>: ${krw(r.total)}`;
+            }
+        }
+
+        function listAll() {
+            const totals = computeTotals();
+            const resultDiv = document.getElementById("result");
+            let tableHTML = '<table><thead><tr><th>이름</th><th>금액</th></tr></thead><tbody>';
+            
+            NAMES.forEach(name => {
+                tableHTML += `<tr><td>${name}</td><td>${krw(totals[name])}</td></tr>`;
+            });
+
+            tableHTML += '</tbody></table>';
+            resultDiv.innerHTML = tableHTML;
+        }
+
+        // Enter 키로도 조회가 가능하도록 설정
+        document.getElementById("nameInput").addEventListener("keyup", function(event) {
+            if (event.key === "Enter") {
+                getAmount();
+            }
+        });
+    </script>
+</body>
+</html>
