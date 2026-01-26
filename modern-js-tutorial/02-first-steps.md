@@ -165,3 +165,78 @@ const pageLoadTime = /* 페이지 로드 시간 */;
 >
 > 기존 변수를 재사용하면 디버깅이 어려워진다.
 > 모던 압축기가 최적화를 잘 해주니까 변수 추가해도 성능 문제 없다.
+
+---
+
+## 5-types: 자료형
+
+### 동적 타입 (Dynamically Typed)
+
+자바스크립트는 동적 타입 언어다. 변수에 저장되는 값의 타입이 언제든 바뀔 수 있다.
+
+```js
+let message = "hello";
+message = 123456; // 에러 없음
+```
+
+정적 타입 언어(Java, TypeScript 등)는 변수 선언 시 타입을 지정하고, 다른 타입의 값을 넣으면 에러가 난다.
+
+```java
+// Java
+String message = "hello";
+message = 123456; // 컴파일 에러!
+```
+
+동적 타입은 유연하지만, 런타임에 예상치 못한 타입 에러가 발생할 수 있다. 그래서 TypeScript 같은 정적 타입 도구를 쓰기도 한다.
+
+> **컴파일 타임 vs 런타임**
+>
+> - 컴파일 타임: 코드를 실행하기 전, 변환/검사하는 단계. 정적 타입 언어는 여기서 타입 에러를 잡는다.
+> - 런타임: 코드가 실제로 실행되는 시점. 동적 타입 언어는 실행해봐야 타입 에러를 알 수 있다.
+>
+> 정적 타입은 실행 전에 에러를 잡아주니까 안전하고, 동적 타입은 유연하지만 실행해봐야 문제를 발견한다.
+
+### 8가지 기본 자료형
+
+| 타입 | 설명 | 예시 |
+|------|------|------|
+| number | 정수, 부동소수점, Infinity, NaN | `123`, `12.345`, `NaN` |
+| bigint | 아주 큰 정수 | `1234567890n` |
+| string | 문자열 | `"hello"`, `'hello'`, `` `hello` `` |
+| boolean | 참/거짓 | `true`, `false` |
+| null | 비어있음/알 수 없음 | `null` |
+| undefined | 할당되지 않음 | `undefined` |
+| object | 복잡한 데이터 구조 | `{}`, `[]` |
+| symbol | 고유 식별자 | `Symbol("id")` |
+
+### null vs undefined
+
+- `null`: 의도적으로 "비어있음"을 표현할 때
+- `undefined`: 값이 할당되지 않은 상태
+
+```js
+let age;
+alert(age); // undefined - 할당 안 됨
+
+let user = null; // 의도적으로 비어있음
+```
+
+> **undefined를 직접 할당하지 말자**
+>
+> 비어있음을 표현하고 싶으면 `null`을 쓴다.
+> `undefined`는 "할당되지 않은 상태"를 위해 남겨두는 게 좋다.
+
+### typeof 연산자
+
+```js
+typeof 0          // "number"
+typeof "foo"      // "string"
+typeof true       // "boolean"
+typeof undefined  // "undefined"
+typeof null       // "object" ← 언어의 오류!
+typeof alert      // "function"
+```
+
+> **typeof null === "object"는 버그다**
+>
+> `null`은 객체가 아니다. 하위 호환성 때문에 수정하지 않고 남겨둔 것.
