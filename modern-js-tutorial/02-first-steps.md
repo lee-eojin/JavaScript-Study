@@ -510,3 +510,85 @@ null === undefined;  // false (타입이 다름)
 > `==`는 null을 변환하지 않는다 (null은 undefined와만 같음).
 >
 > 결론: **null이나 undefined를 비교 연산자에 넣지 말자.**
+
+---
+
+## 10-ifelse: 조건문과 삼항 연산자
+
+if문 자체는 다른 언어랑 비슷하다. 조건이 true면 실행되고, false면 안 된다.
+한 가지 기억할 건 한 줄짜리 코드라도 중괄호 `{}`로 감싸는 게 좋다는 점이다.
+나중에 코드 추가할 때 실수할 여지를 줄여준다.
+
+```js
+// 이것보다
+if (condition) doSomething();
+
+// 이게 낫다
+if (condition) {
+  doSomething();
+}
+```
+
+if문 괄호 안에 들어가는 값은 자동으로 불린형으로 변환된다.
+앞에서 배운 falsy/truthy 개념이 여기서 쓰인다.
+`0`, `""`, `null`, `undefined`, `NaN`은 false로 변환되니까 if문을 통과하지 못한다.
+
+### else if vs 조기 반환
+
+else if로 여러 조건을 처리할 수 있는데, **조기 반환(early return)**이 더 깔끔할 때가 많다.
+들여쓰기가 깊어지지 않고 흐름이 명확해진다.
+
+```js
+// else if 스타일
+function getGrade(score) {
+  if (score >= 90) {
+    return 'A';
+  } else if (score >= 80) {
+    return 'B';
+  } else {
+    return 'C';
+  }
+}
+
+// early return 스타일
+function getGrade(score) {
+  if (score >= 90) {
+    return 'A';
+  }
+  if (score >= 80) {
+    return 'B';
+  }
+  return 'C';
+}
+```
+
+> **조기 반환 (Early Return)**
+>
+> 조건을 만족하면 바로 return해서 함수를 빠져나오는 패턴이다.
+> else를 쓰지 않아도 되고, 코드가 위에서 아래로 자연스럽게 읽힌다.
+> 중첩 if문 지옥을 피할 수 있다.
+
+### 삼항 연산자
+
+> **삼항 연산자 (Ternary Operator)**
+>
+> `조건 ? 값1 : 값2` 형태로 쓰는 연산자다.
+> 조건이 true면 값1, false면 값2를 반환한다.
+> 피연산자가 3개라서 삼항 연산자라고 부른다.
+
+삼항 연산자는 **값을 반환할 때** 쓰는 거다.
+근데 짧아 보여도 읽기 불편하고, 중첩되면 더 심해진다.
+단순한 경우가 아니면 그냥 if문 쓰는 게 낫다.
+
+```js
+// 삼항 연산자 - 짧지만 가독성 별로
+let status = age >= 18 ? '성인' : '미성년자';
+
+// if문 - 명확하다
+let status;
+if (age >= 18) {
+  status = '성인';
+} else {
+  status = '미성년자';
+}
+```
