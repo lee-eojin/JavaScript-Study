@@ -266,3 +266,78 @@ let ok = confirm("진행할까요?");     // 확인/취소 (true/false)
 >
 > 실전에서는 이 기본 대화상자 대신 직접 만든 커스텀 모달을 쓰는 경우가 많다.
 > 모양을 커스터마이징할 수 없고, 브라우저마다 생김새가 다르기 때문이다.
+
+---
+
+## 7-type-conversions: 형 변환
+
+형 변환은 데이터 타입이 바뀌는 것이다.
+
+- **암시적 형 변환**: 자바스크립트가 자동으로 변환
+- **명시적 형 변환**: 개발자가 `String()`, `Number()`, `Boolean()` 등으로 직접 변환
+
+```js
+// 암시적
+alert(123);       // 숫자가 문자열로 자동 변환
+"6" / "2";        // 문자열이 숫자로 자동 변환 → 3
+
+// 명시적
+String(123);      // "123"
+Number("123");    // 123
+Boolean(1);       // true
+```
+
+### boolean과 문자열 "true"는 다르다
+
+```js
+let a = true;       // boolean
+let b = "true";     // string
+
+typeof a;  // "boolean"
+typeof b;  // "string"
+
+a === b;   // false - 타입이 다름
+```
+
+따옴표로 감싸면 문자열이 된다. `true`와 `"true"`는 완전히 다른 값이다.
+
+### 숫자형 변환 규칙
+
+| 값 | 변환 결과 |
+|---|---|
+| `undefined` | `NaN` |
+| `null` | `0` |
+| `true` / `false` | `1` / `0` |
+| 문자열 | 숫자로 읽음, 실패 시 `NaN` |
+
+```js
+Number("123");       // 123
+Number("123z");      // NaN
+Number(null);        // 0
+Number(undefined);   // NaN ← 주의!
+```
+
+### 불린형 변환 - Falsy와 Truthy
+
+> **Falsy (false로 취급되는 값)**
+>
+> ```js
+> false, 0, "", null, undefined, NaN
+> ```
+>
+> 이 6개만 falsy고, 나머지는 전부 truthy다.
+
+```js
+Boolean("");        // false - 빈 문자열
+Boolean("0");       // true - 문자가 있음
+Boolean("false");   // true - 문자열 "false"는 그냥 글자
+Boolean([]);        // true - 빈 배열도 truthy
+Boolean({});        // true - 빈 객체도 truthy
+```
+
+> **자주 하는 실수**
+>
+> - `"0"`은 truthy다 (빈 문자열이 아니니까)
+> - `" "` 공백 문자열도 truthy다
+> - `null`은 숫자로 변환하면 `0`, `undefined`는 `NaN`이다
+> - 문자열 `"false"`는 falsy가 아니다 (그냥 글자가 있는 문자열)
