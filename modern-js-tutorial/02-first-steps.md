@@ -896,3 +896,81 @@ outer: for (let i = 0; i < 3; i++) {
 | `continue` | 현재 이터레이션 스킵, 다음으로 |
 | `break 레이블` | 해당 레이블의 반복문 탈출 |
 | `continue 레이블` | 해당 레이블의 다음 이터레이션으로 |
+
+---
+
+## 14-switch: switch문
+
+여러 개의 if-else if 조건문을 대체할 수 있다. 특정 값에 따라 분기할 때 가독성이 좋다.
+
+```js
+switch (x) {
+  case 'value1':
+    // x === 'value1'일 때 실행
+    break;
+  case 'value2':
+    // x === 'value2'일 때 실행
+    break;
+  default:
+    // 일치하는 case 없을 때 실행
+}
+```
+
+### break를 빼먹으면 안 된다
+
+`break`가 없으면 조건에 상관없이 다음 case도 계속 실행된다.
+
+```js
+let a = 4;
+switch (a) {
+  case 4:
+    console.log('4입니다');   // 실행됨
+  case 5:
+    console.log('5입니다');   // 이것도 실행됨!
+  default:
+    console.log('default');   // 이것도 실행됨!
+}
+```
+
+> **fall-through**
+>
+> break 없이 다음 case로 넘어가는 현상을 fall-through라고 한다.
+> 의도적으로 쓰는 경우도 있지만, 대부분은 실수다.
+
+### case 묶기
+
+같은 코드를 실행할 case는 묶을 수 있다. fall-through를 의도적으로 활용하는 경우다.
+
+```js
+switch (fruit) {
+  case 'apple':
+  case 'banana':
+    console.log('과일입니다');
+    break;
+  case 'carrot':
+    console.log('채소입니다');
+    break;
+}
+```
+
+### 일치 비교 (===)를 사용한다
+
+switch문은 `===`로 비교한다. 타입이 다르면 일치하지 않는다.
+
+```js
+let input = prompt("값 입력");  // 문자열 반환
+
+switch (input) {
+  case 3:   // input은 문자열, 3은 숫자
+    console.log('절대 실행 안 됨');
+    break;
+  case '3':  // 둘 다 문자열
+    console.log('이게 실행됨');
+    break;
+}
+```
+
+> **주의**
+>
+> `prompt()`는 항상 문자열을 반환한다.
+> 숫자와 비교하려면 case에도 문자열을 쓰거나, 입력값을 숫자로 변환해야 한다.
