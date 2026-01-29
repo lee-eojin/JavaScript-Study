@@ -1,4 +1,4 @@
-# 📚 JavaScript Study
+# JavaScript Study
 ![javascript](https://img.shields.io/badge/-JavaScript-F7DF1E?style=flat&logo=javascript&logoColor=white)
 
 > 자바스크립트 언어 기본 문법 및 알고리즘 학습 기록 저장소입니다.
@@ -11,7 +11,3 @@
 
 - **`js-algorithm/`** - 알고리즘 문제 풀이 연습
 - **`modern-js-tutorial/`** - 모던 자바스크립트 튜토리얼 학습
-
----
-
-**만든이**: [@lee-eojin](https://github.com/lee-eojin)
