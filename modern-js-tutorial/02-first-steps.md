@@ -974,3 +974,187 @@ switch (input) {
 >
 > `prompt()`는 항상 문자열을 반환한다.
 > 숫자와 비교하려면 case에도 문자열을 쓰거나, 입력값을 숫자로 변환해야 한다.
+
+---
+
+## 15-function-basics: 함수
+
+함수는 코드를 재사용하기 위한 기본 단위다.
+
+```js
+function 함수이름(매개변수1, 매개변수2) {
+  // 함수 본문
+  return 반환값;
+}
+```
+
+### 매개변수와 인수
+
+> **매개변수 (Parameter)**
+>
+> 함수를 **선언**할 때 괄호 안에 적는 변수.
+
+> **인수 (Argument)**
+>
+> 함수를 **호출**할 때 전달하는 실제 값.
+
+```js
+function greet(name) {   // name: 매개변수
+  console.log('Hello ' + name);
+}
+
+greet('John');           // 'John': 인수
+```
+
+### 지역 변수와 외부 변수
+
+```js
+function showMessage() {
+  let message = '안녕';  // 지역 변수
+  console.log(message);
+}
+
+showMessage();
+console.log(message);    // Error: message is not defined
+```
+
+함수 안에서 선언한 변수는 함수 안에서만 접근할 수 있다.
+
+외부 변수는 함수 안에서 접근하고 수정할 수 있다.
+
+```js
+let userName = 'John';
+
+function showMessage() {
+  userName = 'Bob';      // 외부 변수 수정
+}
+
+showMessage();
+console.log(userName);   // 'Bob'
+```
+
+> **변수 가리기 (Shadowing)**
+>
+> 함수 안에서 외부 변수와 같은 이름으로 새 변수를 선언하면, 지역 변수가 외부 변수를 가린다.
+> ```js
+> let userName = 'John';
+>
+> function showMessage() {
+>   let userName = 'Bob';  // 새로 선언 → 지역 변수
+>   console.log(userName); // 'Bob'
+> }
+>
+> showMessage();
+> console.log(userName);   // 'John' (외부 변수는 그대로)
+> ```
+
+### 기본값
+
+인수를 전달하지 않으면 `undefined`가 된다. 기본값을 설정할 수 있다.
+
+```js
+function greet(name = '손님') {
+  console.log('Hello ' + name);
+}
+
+greet();         // 'Hello 손님'
+greet('John');   // 'Hello John'
+```
+
+`||`나 `??`로도 기본값을 설정할 수 있다.
+
+```js
+function greet(name) {
+  name = name || '손님';     // falsy면 기본값
+  name = name ?? '손님';     // null/undefined면 기본값
+}
+```
+
+### return
+
+함수가 **값을 반환**할 때 쓴다.
+
+```js
+function add(a, b) {
+  return a + b;
+}
+
+let result = add(2, 3);  // 5
+```
+
+`return`이 없거나 값 없이 `return;`만 쓰면 `undefined`를 반환한다.
+
+```js
+function doNothing() { }
+console.log(doNothing());  // undefined
+```
+
+`return`은 함수를 **즉시 종료**한다.
+
+```js
+function check(age) {
+  if (age < 18) {
+    return;  // 여기서 함수 끝
+  }
+  console.log('성인입니다');  // 18 이상일 때만 실행
+}
+```
+
+> **주의: return과 값 사이에 줄바꿈 금지**
+>
+> ```js
+> return
+>   a + b;  // 자동으로 세미콜론이 붙어서 return; 이 됨
+> ```
+>
+> 여러 줄로 쓰려면 괄호로 감싸야 한다.
+> ```js
+> return (
+>   a + b
+> );
+> ```
+
+### 함수 이름 짓기
+
+함수는 동작을 수행하니까 이름은 **동사**로 짓는다. 접두어를 붙이면 역할이 명확해진다.
+
+| 접두어 | 의미 | 예시 |
+|--------|------|------|
+| `get` | 값을 반환 | `getAge()` |
+| `calc` | 계산 | `calcSum()` |
+| `create` | 생성 | `createForm()` |
+| `check` | 확인 후 불린 반환 | `checkPermission()` |
+| `show` | 출력 | `showMessage()` |
+
+### 단일 책임 원칙
+
+함수 하나는 **한 가지 일만** 해야 한다. 함수 이름에 있는 동작만 수행해야 한다.
+
+```js
+// 나쁜 예 - getAge가 출력까지 함
+function getAge() {
+  let age = calculateAge();
+  alert(age);    // get인데 출력? ❌
+  return age;
+}
+
+// 좋은 예 - 역할 분리
+function getAge() {
+  return calculateAge();
+}
+
+function showAge() {
+  alert(getAge());
+}
+```
+
+> **자기 설명적 코드 (Self-describing Code)**
+>
+> 함수 이름만 보고 무슨 일을 하는지 알 수 있는 코드.
+> 주석 없이도 코드가 읽히면 좋은 코드다.
+>
+> ```js
+> // 이름만 봐도 이해됨
+> if (!isPrime(n)) continue;
+> ```
+
