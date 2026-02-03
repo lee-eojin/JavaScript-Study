@@ -1158,3 +1158,313 @@ function showAge() {
 > if (!isPrime(n)) continue;
 > ```
 
+---
+
+## 16-function-expressions: 함수 표현식
+
+함수를 만드는 또 다른 방법이다. 함수 선언문과 달리 **표현식** 형태로 함수를 만든다.
+
+```js
+// 함수 선언문
+function sayHi() {
+  alert("Hello");
+}
+
+// 함수 표현식
+let sayHi = function() {
+  alert("Hello");
+};
+```
+
+함수 표현식은 `let 변수 = 값;` 형태니까 끝에 세미콜론이 붙는다.
+
+> **왜 함수 표현식에만 세미콜론이 있나?**
+>
+> 세미콜론은 **구문(statement)의 끝**을 나타낸다.
+>
+> ```js
+> if (true) { }       // 코드 블록으로 끝남 → 세미콜론 없음
+> for (;;) { }        // 코드 블록으로 끝남 → 세미콜론 없음
+> function foo() { }  // 코드 블록으로 끝남 → 세미콜론 없음
+>
+> let x = 5;          // 할당문 → 세미콜론 있음
+> let fn = function() { };  // 할당문 → 세미콜론 있음
+> ```
+>
+> 함수 표현식의 세미콜론은 함수 때문이 아니라 **할당문이 끝나서** 붙는 거다.
+>
+> 참고로 함수 선언문 끝에 세미콜론 붙여도 에러는 안 난다. 빈 문장으로 무시됨. 근데 관례상 안 붙인다.
+
+### 함수는 값이다
+
+자바스크립트에서 함수는 **값**이다. 다른 언어처럼 특별한 구조가 아니라, 문자열이나 숫자처럼 변수에 담을 수 있는 값이다.
+
+```js
+function sayHi() {
+  alert("Hello");
+}
+
+alert(sayHi);  // 함수 코드가 문자열로 출력됨
+```
+
+괄호 없이 `sayHi`만 쓰면 함수가 **실행되지 않는다**. 함수 자체를 값으로 참조하는 거다.
+
+- `sayHi` → 함수 자체 (값)
+- `sayHi()` → 함수 실행 (호출)
+
+값이니까 복사도 된다:
+
+```js
+function sayHi() {
+  alert("Hello");
+}
+
+let func = sayHi;  // 함수를 복사
+
+func();   // Hello
+sayHi();  // Hello
+```
+
+`sayHi`를 `func`에 복사했으니까, 이제 `func()`로도 같은 함수를 실행할 수 있다.
+
+> **일급 객체 (First-class Citizen)**
+>
+> 자바스크립트에서 함수는 일급 객체다. 일급 객체란:
+>
+> 1. 변수에 담을 수 있다
+> 2. 함수의 인수로 전달할 수 있다
+> 3. 함수의 반환값으로 쓸 수 있다
+>
+> ```js
+> // 1. 변수에 담기
+> let greet = function() { alert("Hi"); };
+>
+> // 2. 인수로 전달
+> setTimeout(greet, 1000);
+>
+> // 3. 반환값으로 쓰기
+> function createGreeter() {
+>   return function() { alert("Hi"); };
+> }
+> ```
+>
+> 함수가 일급 객체라서 콜백, 클로저, 고차 함수 같은 패턴이 가능하다.
+
+### 콜백 함수
+
+함수를 다른 함수의 인수로 전달하고, 나중에 호출하는 패턴이다.
+
+```js
+function ask(question, yes, no) {
+  if (confirm(question)) yes();
+  else no();
+}
+
+function showOk() {
+  alert("동의하셨습니다.");
+}
+
+function showCancel() {
+  alert("취소 버튼을 누르셨습니다.");
+}
+
+ask("동의하십니까?", showOk, showCancel);
+```
+
+> **confirm() 함수**
+>
+> 브라우저 내장 함수다. 확인/취소 버튼이 있는 대화상자를 띄운다.
+>
+> | 함수 | 역할 | 반환값 |
+> |------|------|--------|
+> | `alert(msg)` | 메시지 출력 | `undefined` |
+> | `prompt(msg)` | 입력창 | 문자열 또는 `null` |
+> | `confirm(msg)` | 확인/취소 창 | `true` 또는 `false` |
+>
+> 이건 자바스크립트 문법이 아니라 브라우저 API라서, 처음 보면 모른다. 외워야 안다.
+
+`ask` 함수 호출 시 인수가 이렇게 매핑된다:
+
+```js
+ask("동의하십니까?", showOk, showCancel);
+//        ↓             ↓         ↓
+//    question         yes        no
+```
+
+그래서 함수 내부에서 `yes()`를 호출하면 `showOk()`가 실행되고, `no()`를 호출하면 `showCancel()`이 실행된다.
+
+> **콜백 (Callback)**
+>
+> "나중에 다시 호출해줘"라는 의미다.
+> 함수를 인수로 넘기고, 특정 시점에 그 함수가 호출되는 패턴이다.
+>
+> 콜백은 자바스크립트에서 엄청 많이 쓰인다:
+> - 이벤트 핸들러 (클릭하면 이 함수 실행해줘)
+> - 타이머 (3초 후에 이 함수 실행해줘)
+> - 비동기 작업 (데이터 받아오면 이 함수 실행해줘)
+
+### 익명 함수
+
+이름 없이 선언한 함수다.
+
+```js
+ask(
+  "동의하십니까?",
+  function() { alert("동의하셨습니다."); },
+  function() { alert("취소 버튼을 누르셨습니다."); }
+);
+```
+
+`showOk`, `showCancel`을 따로 선언하지 않고 바로 넘겼다. 이 함수들은 이름이 없어서 `ask` 바깥에서는 접근할 수 없다.
+
+> **익명 함수 (Anonymous Function)**
+>
+> 이름이 없는 함수. 주로 콜백으로 바로 넘길 때 쓴다.
+> 한 번만 쓸 함수를 굳이 이름 붙여서 선언할 필요 없을 때 유용하다.
+>
+> ```js
+> // 이름 있는 함수
+> function handleClick() { ... }
+> button.addEventListener('click', handleClick);
+>
+> // 익명 함수
+> button.addEventListener('click', function() { ... });
+> ```
+
+### 함수 표현식 vs 함수 선언문
+
+세 가지 차이점이 있다.
+
+#### 1. 문법
+
+```js
+// 함수 선언문: 독립된 구문
+function sum(a, b) {
+  return a + b;
+}
+
+// 함수 표현식: 표현식의 일부 (할당문 우측)
+let sum = function(a, b) {
+  return a + b;
+};
+```
+
+#### 2. 생성 시점 (호이스팅)
+
+**함수 선언문**은 스크립트 실행 전에 먼저 생성된다. 그래서 선언 전에 호출해도 된다.
+
+```js
+sayHi("John");  // 동작함
+
+function sayHi(name) {
+  alert(`Hello, ${name}`);
+}
+```
+
+**함수 표현식**은 실행 흐름이 도달했을 때 생성된다. 그 전에는 못 쓴다.
+
+```js
+sayHi("John");  // Error: sayHi is not defined
+
+let sayHi = function(name) {
+  alert(`Hello, ${name}`);
+};
+```
+
+> **호이스팅 (Hoisting)**
+>
+> "끌어올리다"라는 뜻이다. 자바스크립트 엔진이 코드 실행 전에 선언부를 먼저 처리하는 동작이다.
+>
+> - `function` 선언문: 함수 전체가 호이스팅됨 → 어디서든 호출 가능
+> - `var` 변수: 선언만 호이스팅, 값은 `undefined`
+> - `let`, `const`: 호이스팅은 되지만 초기화 전 접근 불가 (TDZ)
+>
+> ```js
+> // 함수 선언문
+> foo();  // OK
+> function foo() { }
+>
+> // var
+> console.log(x);  // undefined (에러 아님)
+> var x = 5;
+>
+> // let
+> console.log(y);  // Error: Cannot access 'y' before initialization
+> let y = 5;
+> ```
+>
+> 함수 표현식은 `let`, `const`에 할당하니까 TDZ 규칙을 따른다.
+
+> **TDZ (Temporal Dead Zone)**
+>
+> `let`, `const`로 선언한 변수는 선언 위치에 도달하기 전까지 접근할 수 없다.
+> 이 구간을 TDZ라고 한다. 일시적 사각지대.
+>
+> ```js
+> // TDZ 시작
+> console.log(x);  // Error
+> // TDZ 끝
+> let x = 5;       // 여기서 초기화
+> console.log(x);  // 5
+> ```
+
+#### 3. 스코프
+
+엄격 모드에서 함수 선언문은 **블록 안에서만** 유효하다.
+
+```js
+let age = 16;
+
+if (age < 18) {
+  function welcome() {
+    alert("안녕!");
+  }
+  welcome();  // 동작함
+}
+
+welcome();  // Error: welcome is not defined
+```
+
+블록 밖에서 쓰려면 함수 표현식을 써야 한다:
+
+```js
+let age = 16;
+let welcome;
+
+if (age < 18) {
+  welcome = function() {
+    alert("안녕!");
+  };
+} else {
+  welcome = function() {
+    alert("안녕하세요!");
+  };
+}
+
+welcome();  // 동작함
+```
+
+삼항 연산자로 줄일 수도 있긴 한데:
+
+```js
+let welcome = (age < 18) ?
+  function() { alert("안녕!"); } :
+  function() { alert("안녕하세요!"); };
+```
+
+근데 이 형태는 실무에서 잘 안 쓴다. 가독성이 별로라서. 그냥 if문 쓰거나, 함수 안에서 분기하는 게 낫다.
+
+### 뭘 쓸까?
+
+**함수 선언문을 먼저 고려**하는 게 좋다.
+
+- 선언 전에 호출 가능 → 코드 구성이 자유로움
+- `function f() { }`가 눈에 더 잘 들어옴
+- 가독성 좋음
+
+**함수 표현식은 이럴 때 쓴다:**
+
+- 조건에 따라 다른 함수를 할당해야 할 때
+- 콜백으로 넘길 때
+- 함수를 변수처럼 다뤄야 할 때
+
