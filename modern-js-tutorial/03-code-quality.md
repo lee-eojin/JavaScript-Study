@@ -142,3 +142,247 @@ for (let i = 0; i < 5; i++) {
 2. `debugger` 문을 만났을 때
 3. 에러 발생 시 (예외 발생 시 멈춤 옵션이 켜져 있을 때)
 
+---
+
+## 02-coding-style: 코딩 스타일
+
+코드는 간결하고 읽기 쉬워야 한다. 복잡한 문제를 읽기 쉬운 코드로 풀어내는 게 진짜 실력이다. 무조건 따라야 할 규칙은 없지만, 어떤 스타일이 왜 좋은지 알아두면 도움이 된다.
+
+### 중괄호
+
+여는 중괄호는 키워드와 같은 줄에 쓴다. 이집션(Egyptian) 스타일이라고 부른다.
+
+```js
+if (condition) {
+  // 코드
+}
+```
+
+> **이집션 스타일 (Egyptian Style)**
+>
+> 이집트 피라미드 벽화에서 사람들이 몸은 정면인데 팔은 옆으로 꺾어서 그린 모양이
+> `){` 이 형태랑 비슷하다고 해서 붙은 이름이다.
+> 자바스크립트는 거의 다 이 스타일을 쓴다. Airbnb, Google 스타일 가이드 전부 이집션 스타일.
+>
+> ```js
+> // 이집션 스타일 - 같은 줄에 열기
+> if (condition) {
+> }
+>
+> // 다른 스타일 - 새 줄에 열기 (C#, Java 쪽에서 가끔 봄)
+> if (condition)
+> {
+> }
+> ```
+
+한 줄짜리 코드라도 중괄호로 감싸는 게 좋다.
+
+```js
+// 이것보다
+if (n < 0) alert("음수입니다");
+
+// 이게 낫다
+if (n < 0) {
+  alert("음수입니다");
+}
+```
+
+나중에 코드 추가할 때 실수할 여지를 줄여준다. 02-first-steps에서도 나왔던 얘기다.
+
+### 가로 길이
+
+한 줄이 너무 길면 여러 줄로 나눈다. 보통 80자나 120자로 제한하는데, 요즘은 모니터가 넓어져서 120자 쓰는 팀이 더 많은 추세다.
+
+```js
+// 백틱으로 문자열 나누기
+let str = `
+  ECMA International's TC39 is a group of JavaScript developers,
+  implementers, academics, and more.
+`;
+
+// 긴 조건문 나누기
+if (
+  id === 123 &&
+  moonPhase === 'Waning Gibbous' &&
+  zodiacSign === 'Libra'
+) {
+  letTheSorceryBegin();
+}
+```
+
+실무에서 팀원들이 직접 "가로 몇 자로 하자" 논의하는 일은 거의 없다. 유명한 스타일 가이드를 하나 골라서 그대로 따르고(Airbnb는 100자, Google은 80자 등), ESLint + Prettier 같은 도구로 자동 포매팅 설정해두면 저장할 때 알아서 정리된다.
+
+> **Prettier**
+>
+> 코드 포매터다. 저장하면 들여쓰기, 세미콜론, 따옴표, 줄바꿈 같은 걸 자동으로 맞춰준다.
+>
+> ```js
+> // 저장 전
+> function foo(a,b){
+> let result=a+b
+>     return result}
+>
+> // Prettier가 자동 정리
+> function foo(a, b) {
+>   let result = a + b;
+>   return result;
+> }
+> ```
+>
+> ESLint와 역할이 다르다:
+>
+> | 도구 | 역할 |
+> |------|------|
+> | ESLint | 코드 **품질** 검사 (미사용 변수, 잠재적 버그 등) |
+> | Prettier | 코드 **포맷** 정리 (들여쓰기, 공백, 줄바꿈 등) |
+>
+> 실무에서는 둘 다 같이 쓰는 경우가 대부분이다.
+
+### 들여쓰기
+
+들여쓰기에는 두 종류가 있다.
+
+**가로 들여쓰기**: 스페이스 2개 또는 4개. 탭보다 스페이스가 더 유연하다.
+
+**세로 들여쓰기**: 논리 블록 사이에 빈 줄을 넣어 코드를 분리하는 것.
+
+```js
+function pow(x, n) {
+  let result = 1;
+
+  for (let i = 0; i < n; i++) {
+    result *= x;
+  }
+
+  return result;
+}
+```
+
+변수 선언, 반복문, return문 사이에 빈 줄을 넣었다. 세로 들여쓰기 없이 9줄 이상 연속으로 쓰지 않는 게 좋다.
+
+> **세로 들여쓰기를 빼먹는 경우가 많다**
+>
+> 가로 들여쓰기는 다들 신경 쓰는데, 세로 들여쓰기는 의외로 간과한다.
+> 의미 단위별로 빈 줄 하나 넣어주는 습관을 들이면 가독성이 확 올라간다.
+
+### 세미콜론
+
+모든 구문 끝에 세미콜론을 붙이는 게 좋다. 자동 삽입을 믿다가 줄바꿈이 세미콜론으로 해석되지 않는 경우에 버그가 생길 수 있다. 이건 02-first-steps에서도 다뤘다.
+
+### 중첩 레벨
+
+중첩이 깊어지면 가독성이 급격히 떨어진다. `continue`나 조기 반환으로 줄일 수 있다.
+
+```js
+// 중첩이 깊다
+for (let i = 0; i < 10; i++) {
+  if (cond) {
+    // ...
+  }
+}
+
+// continue로 중첩 제거
+for (let i = 0; i < 10; i++) {
+  if (!cond) continue;
+  // ...
+}
+```
+
+함수에서도 마찬가지다. else 안에 본문을 넣는 것보다 early return이 낫다.
+
+```js
+// else 중첩
+function pow(x, n) {
+  if (n < 0) {
+    alert("음수 불가");
+  } else {
+    let result = 1;
+    for (let i = 0; i < n; i++) {
+      result *= x;
+    }
+    return result;
+  }
+}
+
+// early return
+function pow(x, n) {
+  if (n < 0) {
+    alert("음수 불가");
+    return;
+  }
+
+  let result = 1;
+  for (let i = 0; i < n; i++) {
+    result *= x;
+  }
+  return result;
+}
+```
+
+특별한 조건을 먼저 처리하고 빠져나오면, 나머지 코드는 추가 중첩 없이 읽을 수 있다.
+
+### 함수의 위치
+
+헬퍼 함수를 여러 개 만들어 쓸 때, 두 가지 배치 방법이 있다.
+
+```js
+// 1. 함수 먼저 선언, 사용 코드 나중에
+function createElement() { ... }
+function setHandler(elem) { ... }
+
+let elem = createElement();
+setHandler(elem);
+```
+
+```js
+// 2. 사용 코드 먼저, 함수는 아래에
+let elem = createElement();
+setHandler(elem);
+
+// --- 헬퍼 함수 ---
+function createElement() { ... }
+function setHandler(elem) { ... }
+```
+
+대부분 두 번째 방법을 선호한다. 코드를 읽는 사람은 "이게 뭘 하는지"를 먼저 알고 싶어하기 때문이다. 함수 이름이 명확하면 본문을 읽지 않아도 된다. 호이스팅 덕분에 아래에 선언해도 위에서 호출할 수 있다.
+
+### 스타일 가이드
+
+팀 전체가 동일한 스타일 가이드를 따르면 누가 써도 같은 스타일의 코드가 나온다. 요즘은 기존에 만들어진 가이드를 가져다 쓰는 경우가 많다.
+
+유명한 가이드:
+- [Google JavaScript Style Guide](https://google.github.io/styleguide/jsguide.html)
+- [Airbnb JavaScript Style Guide](https://github.com/airbnb/javascript)
+- [StandardJS](https://standardjs.com/)
+
+### Linter
+
+코드가 스타일 가이드를 잘 따르고 있는지 자동으로 검사해주는 도구다. 오타 같은 버그도 미리 잡아준다.
+
+> **ESLint**
+>
+> 가장 많이 쓰이는 linter다. `.eslintrc` 설정 파일로 규칙을 커스터마이징할 수 있다.
+>
+> ```json
+> {
+>   "extends": "eslint:recommended",
+>   "env": {
+>     "browser": true,
+>     "node": true,
+>     "es6": true
+>   },
+>   "rules": {
+>     "no-console": 0,
+>     "indent": ["warning", 2]
+>   }
+> }
+> ```
+>
+> 에디터 플러그인이랑 연동하면 코드 쓰면서 바로 확인할 수 있다.
+
+설치 순서:
+1. Node.js 설치
+2. `npm install -g eslint`
+3. 프로젝트 루트에 `.eslintrc` 생성
+4. 에디터에 ESLint 플러그인 설치
+
