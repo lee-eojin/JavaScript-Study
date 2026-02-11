@@ -466,3 +466,156 @@ family = null;
 - 가비지 컬렉션은 엔진이 자동으로 수행한다. 개발자가 강제하거나 막을 수 없다
 - 도달 가능한 상태일 때 메모리에 남는다
 - 참조가 있다고 도달 가능한 게 아니다. 루트에서 접근할 수 있어야 한다 (도달할 수 없는 섬)
+
+---
+
+## 04-object-methods: 메서드와 this
+
+객체는 데이터만 저장하는 게 아니라 행동도 할 수 있다. 프로퍼티 값에 함수를 넣으면 된다.
+
+### 메서드
+
+객체 프로퍼티에 할당된 함수를 메서드라고 부른다.
+
+```js
+let user = {
+  name: "John",
+};
+
+// 프로퍼티에 함수 할당 → 메서드
+user.sayHi = function() {
+  alert("안녕하세요!");
+};
+
+user.sayHi(); // "안녕하세요!"
+```
+
+이미 선언된 함수를 메서드로 등록할 수도 있다.
+
+```js
+function sayHi() {
+  alert("안녕하세요!");
+}
+
+user.sayHi = sayHi;
+user.sayHi(); // "안녕하세요!"
+```
+
+> 메서드 (Method)
+>
+> 객체 프로퍼티에 저장된 함수다.
+> 프로퍼티 값이 문자열이면 그냥 프로퍼티, 함수면 메서드라고 부른다.
+
+### 메서드 단축 구문
+
+객체 리터럴 안에서 `function`을 생략할 수 있다. 실무에서 거의 이 방식을 쓴다.
+
+```js
+// 이거랑
+let user = {
+  sayHi: function() {
+    alert("Hello");
+  }
+};
+
+// 이거랑 같다
+let user = {
+  sayHi() {
+    alert("Hello");
+  }
+};
+```
+
+### this
+
+메서드 안에서 객체 자신에 접근하려면 `this`를 쓴다. `this`는 메서드를 호출한 객체, 즉 점(.) 앞의 객체를 가리킨다.
+
+```js
+let user = {
+  name: "John",
+
+  sayHi() {
+    alert(this.name); // "John"
+  }
+};
+
+user.sayHi(); // this = user
+```
+
+> this
+>
+> 메서드를 호출한 객체를 가리키는 키워드다.
+> `obj.method()` 형태로 호출하면 `this`는 `obj`가 된다.
+> 런타임에 결정되기 때문에, 같은 함수라도 어떤 객체에서 호출하느냐에 따라 달라진다.
+
+### this를 안 쓰고 외부 변수를 쓰면 위험하다
+
+```js
+let user = {
+  name: "John",
+
+  sayHi() {
+    alert(user.name); // this 대신 user를 직접 씀
+  }
+};
+
+let admin = user;
+user = null;
+
+admin.sayHi(); // Error! user가 null이니까
+```
+
+`this.name`을 썼으면 에러가 안 났다. `this`는 호출한 객체(`admin`)를 가리키니까.
+
+### 자유로운 this
+
+자바스크립트의 `this`는 런타임에 결정된다. 같은 함수라도 어떤 객체에서 호출하느냐에 따라 `this`가 달라진다.
+
+```js
+let user = { name: "John" };
+let admin = { name: "Admin" };
+
+function sayHi() {
+  alert(this.name);
+}
+
+user.f = sayHi;
+admin.f = sayHi;
+
+user.f();  // "John" (this == user)
+admin.f(); // "Admin" (this == admin)
+```
+
+점 앞에 아무것도 없이 그냥 `sayHi()`로 호출하면 엄격 모드에서 `this`는 `undefined`다.
+
+### 화살표 함수의 this
+
+화살표 함수는 자기만의 `this`가 없다. `this`를 쓰면 바깥 함수의 `this`를 가져다 쓴다.
+
+```js
+let user = {
+  name: "John",
+
+  sayHi() {
+    // 화살표 함수 - 바깥 sayHi의 this를 그대로 씀
+    let arrow = () => alert(this.name);
+    arrow(); // "John"
+
+    // 일반 함수 - 자기만의 this가 생김
+    let regular = function() {
+      alert(this.name); // undefined (점 앞에 아무것도 없으니까)
+    };
+    regular();
+  }
+};
+
+user.sayHi();
+```
+
+> 화살표 함수와 this
+>
+> | | 일반 함수 | 화살표 함수 |
+> |---|---|---|
+> | this | 호출 방식에 따라 결정 (점 앞의 객체) | 자기 this 없음. 바깥 함수의 this를 가져옴 |
+>
+> 메서드 안에서 콜백을 쓸 때 화살표 함수가 편하다. 바깥의 `this`를 알아서 가져다 쓰니까.
