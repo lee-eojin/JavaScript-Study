@@ -211,3 +211,119 @@ for (let code in codes) {
 > `"+49"` → 정수 프로퍼티 아님 (Number("+49") → 49 → String(49) → "49" ≠ "+49")
 
 추가한 순서대로 나오게 하려면 키를 정수가 아닌 형태로 만들면 된다. `"+49"` 같이 앞에 `+`를 붙이는 트릭을 쓸 수 있다.
+
+---
+
+## 02-object-copy: 참조에 의한 객체 복사
+
+### 원시값 vs 객체의 복사 방식
+
+원시값은 값 자체가 복사된다. 각각 독립적이다.
+
+```js
+let a = "Hello";
+let b = a;
+
+b = "Bye";
+alert(a); // "Hello" - 안 바뀜
+```
+
+객체는 다르다. 변수에 객체가 통째로 들어가는 게 아니라, 객체가 있는 **메모리 주소(참조)**가 저장된다.
+
+```js
+let user = { name: "John" };
+let admin = user; // 참조값을 복사
+```
+
+> **참조 (Reference)**
+>
+> 객체가 저장된 메모리 주소다.
+> 비유하면 객체는 집이고, 변수는 집 주소가 적힌 메모지다.
+> `let admin = user`는 같은 주소를 메모지 하나 더 복사하는 것.
+> 메모지가 두 장이지만 가리키는 집은 하나다.
+
+변수가 두 개지만 같은 객체를 가리키니까, 한쪽에서 바꾸면 다른 쪽에서도 보인다.
+
+```js
+admin.name = "Pete";
+alert(user.name); // "Pete" - 같은 객체니까
+```
+
+### 참조에 의한 비교
+
+객체 비교는 같은 객체를 가리키는지를 본다. 내용이 같아도 다른 객체면 `false`다.
+
+```js
+let a = {};
+let b = a;
+alert(a == b);  // true - 같은 객체
+
+let c = {};
+let d = {};
+alert(c == d);  // false - 내용은 같지만 다른 객체
+```
+
+### 객체 복사 - Object.assign
+
+독립적인 복사본을 만들고 싶을 때 쓴다.
+
+```js
+let user = { name: "John", age: 30 };
+
+// 빈 객체 {}에 user의 프로퍼티를 전부 복사
+let clone = Object.assign({}, user);
+
+clone.name = "Pete";
+alert(user.name); // "John" - 원본 안 바뀜
+```
+
+> **Object.assign(목표, 원본1, 원본2, ...)**
+>
+> 원본 객체들의 프로퍼티를 목표 객체에 복사한다. 목표 객체를 반환한다.
+> 키가 겹치면 뒤에 오는 값이 덮어쓴다.
+
+병합에도 쓸 수 있다.
+
+```js
+let user = { name: "John" };
+let perm1 = { canView: true };
+let perm2 = { canEdit: true };
+
+Object.assign(user, perm1, perm2);
+// user = { name: "John", canView: true, canEdit: true }
+```
+
+요즘은 `Object.assign`보다 **스프레드 문법(`...`)**을 더 많이 쓴다. 같은 결과인데 더 짧다.
+
+```js
+let clone = { ...user };
+let merged = { ...user, ...perm1, ...perm2 };
+```
+
+스프레드 문법은 나중에 따로 나온다.
+
+### 얕은 복사 vs 깊은 복사
+
+`Object.assign`이나 스프레드 문법은 **얕은 복사(shallow copy)**다. 프로퍼티 값이 객체인 경우, 그 객체의 참조만 복사된다.
+
+```js
+let user = {
+  name: "John",
+  sizes: { height: 182, width: 50 },
+};
+
+let clone = { ...user };
+
+user.sizes.width++;
+alert(clone.sizes.width); // 51 - 같은 sizes 객체를 공유하고 있다!
+```
+
+> **얕은 복사 (Shallow Copy) vs 깊은 복사 (Deep Copy)**
+>
+> | | 얕은 복사 | 깊은 복사 |
+> |---|---|---|
+> | 1단계 프로퍼티 | 독립 복사 | 독립 복사 |
+> | 중첩 객체 | 참조 공유 | 전부 독립 복사 |
+> | 방법 | `Object.assign`, `{ ...obj }` | `structuredClone()`, lodash `_.cloneDeep()` |
+
+중첩 객체까지 완전히 독립적으로 복사하려면 깊은 복사가 필요하다.
