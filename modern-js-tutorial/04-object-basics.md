@@ -922,3 +922,48 @@ alert(id === idAgain); // true
 ### 실무에서의 심볼
 
 실무에서 심볼을 직접 쓰는 경우는 많지 않다. 대부분 문자열 상수나 TypeScript의 enum으로 대체한다. "이런 게 있구나" 정도로 알고 넘어가면 충분하다.
+
+---
+
+## 09-object-toprimitive: 객체를 원시형으로 변환하기
+
+객체에 `+`, `-` 같은 연산을 하거나 `alert(obj)`로 출력하면, 객체가 원시형으로 자동 변환된다.
+
+### hint
+
+변환 시 어떤 타입을 목표로 하는지를 hint라고 부른다. 세 종류가 있다.
+
+| hint | 발생 상황 |
+|---|---|
+| `"string"` | `alert(obj)`, 문자열을 기대하는 연산 |
+| `"number"` | 수학 연산 (`-`, `*`, `/`), 비교 (`>`, `<`) |
+| `"default"` | `+` (문자열인지 숫자인지 확실치 않을 때), `==` |
+
+실무에서는 `"default"`와 `"number"`를 동일하게 처리하는 경우가 대부분이라, 사실상 문자형 변환과 숫자형 변환 두 가지만 신경 쓰면 된다.
+
+### 변환 알고리즘
+
+엔진이 변환할 때 아래 순서로 메서드를 찾는다.
+
+1. `obj[Symbol.toPrimitive](hint)` 있으면 호출
+2. hint가 `"string"`이면 → `toString()` → `valueOf()` 순서
+3. hint가 `"number"`나 `"default"`이면 → `valueOf()` → `toString()` 순서
+
+### toString
+
+실무에서는 `toString()`만 구현해도 대부분 충분하다. 로깅이나 디버깅 용도로 자주 쓴다.
+
+```js
+let user = {
+  name: "John",
+
+  toString() {
+    return this.name;
+  }
+};
+
+alert(user);       // "John"
+alert(user + 500); // "John500"
+```
+
+기본 `toString()`은 `"[object Object]"`를 반환한다. `alert`에 객체를 넘기면 이게 나오는 이유다.
