@@ -729,3 +729,90 @@ bora.sayHi(); // "제 이름은 이보라입니다."
 ```
 
 나중에 배울 `class` 문법으로도 같은 걸 할 수 있다. `class`는 생성자 함수를 더 깔끔하게 쓸 수 있는 문법이다.
+
+---
+
+## 07-optional-chaining: 옵셔널 체이닝 ?.
+
+중첩 객체의 프로퍼티에 접근할 때, 중간에 값이 없으면 에러가 난다. `?.`을 쓰면 에러 없이 안전하게 접근할 수 있다.
+
+### 문제 상황
+
+```js
+let user = {}; // address가 없는 사용자
+
+alert(user.address.street); // Error! user.address가 undefined인데 .street를 읽으려 함
+```
+
+`?.` 이전에는 `&&`로 일일이 확인해야 했다.
+
+```js
+alert(user && user.address && user.address.street); // undefined, 에러 안 남
+```
+
+### 옵셔널 체이닝
+
+`?.` 앞의 값이 `null`이나 `undefined`면 평가를 멈추고 `undefined`를 반환한다.
+
+```js
+let user = {};
+
+alert(user?.address?.street); // undefined - 에러 안 남
+```
+
+```js
+let user = null;
+
+alert(user?.address); // undefined
+```
+
+> 옵셔널 체이닝 (Optional Chaining)
+>
+> `?.` 앞의 평가 대상이 `null`이나 `undefined`면 평가를 멈추고 `undefined`를 반환하는 문법이다.
+> 중첩 객체에서 중간 값이 없을 수 있을 때 안전하게 접근할 수 있다.
+
+### 남용 금지
+
+`?.`는 없어도 괜찮은 대상에만 써야 한다. 반드시 있어야 하는 값에 `?.`를 쓰면 에러를 조기에 발견하지 못해 디버깅이 어려워진다.
+
+```js
+// user는 반드시 있어야 하고, address는 없을 수도 있는 상황
+user.address?.street    // 좋음 - user는 확실히 있으니까 에러 잡을 수 있음
+user?.address?.street   // 나쁨 - user가 없는 실수를 놓칠 수 있음
+```
+
+### 단락 평가
+
+`?.` 왼쪽이 `null`이나 `undefined`면 오른쪽은 아예 실행되지 않는다.
+
+```js
+let user = null;
+let x = 0;
+
+user?.sayHi(x++); // 아무 일도 안 일어남
+alert(x); // 0 - x는 증가하지 않았다
+```
+
+### 세 가지 형태
+
+| 문법 | 동작 |
+|---|---|
+| `obj?.prop` | obj가 있으면 `obj.prop`, 없으면 `undefined` |
+| `obj?.[prop]` | obj가 있으면 `obj[prop]`, 없으면 `undefined` |
+| `obj?.method()` | obj가 있으면 `obj.method()` 호출, 없으면 `undefined` |
+
+```js
+let user1 = {
+  admin() { alert("관리자입니다."); }
+};
+let user2 = {};
+
+user1.admin?.(); // "관리자입니다."
+user2.admin?.(); // 에러 안 남, 아무 일도 안 일어남
+```
+
+`?.`은 읽기와 삭제에는 쓸 수 있지만, 쓰기(할당)에는 쓸 수 없다.
+
+```js
+user?.name = "John"; // SyntaxError
+```
