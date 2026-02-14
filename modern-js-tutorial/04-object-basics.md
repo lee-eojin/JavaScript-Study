@@ -816,3 +816,109 @@ user2.admin?.(); // 에러 안 남, 아무 일도 안 일어남
 ```js
 user?.name = "John"; // SyntaxError
 ```
+
+---
+
+## 08-symbol: 심볼형
+
+객체 프로퍼티 키는 문자형과 심볼형만 가능하다. 지금까지는 문자형만 썼는데, 심볼형 키도 있다.
+
+### 심볼이란
+
+유일한 식별자를 만들고 싶을 때 사용하는 원시 타입이다. `Symbol()`을 호출할 때마다 절대 겹치지 않는 값이 만들어진다.
+
+```js
+let id1 = Symbol("id");
+let id2 = Symbol("id");
+
+alert(id1 == id2); // false - 설명이 같아도 다른 값
+```
+
+> 심볼 (Symbol)
+>
+> 유일무이한 식별자를 만드는 원시 타입이다.
+> `Symbol()`을 호출할 때마다 새로운 고유한 값이 생긴다.
+> 괄호 안의 문자열은 설명(이름표)일 뿐, 값 자체에 영향을 주지 않는다.
+
+심볼은 문자형으로 자동 변환되지 않는다. 출력하려면 `.toString()`이나 `.description`을 써야 한다.
+
+```js
+let id = Symbol("id");
+
+alert(id);             // TypeError
+alert(id.toString());  // "Symbol(id)"
+alert(id.description); // "id"
+```
+
+### 숨김 프로퍼티
+
+심볼의 핵심 용도다. 서드파티(다른 사람이 만든 외부 코드)에서 가져온 객체에 프로퍼티를 추가할 때, 문자열 키를 쓰면 기존 키와 충돌할 수 있다. 심볼을 쓰면 충돌이 불가능하다.
+
+```js
+let user = { name: "John" }; // 서드파티에서 가져온 객체
+
+// 문자열 키 - 충돌 위험
+user.id = "내 id";
+user.id = "다른 스크립트 id"; // 덮어써짐!
+
+// 심볼 키 - 충돌 불가능
+let myId = Symbol("id");
+let otherId = Symbol("id");
+user[myId] = "내 id";
+user[otherId] = "다른 스크립트 id"; // 각각 독립적
+```
+
+객체 리터럴에서 심볼을 키로 쓸 때는 대괄호로 감싸야 한다.
+
+```js
+let id = Symbol("id");
+
+let user = {
+  name: "John",
+  [id]: 123  // "id": 123으로 쓰면 문자열 키가 됨
+};
+```
+
+### 심볼은 for..in에서 안 보인다
+
+심볼 키 프로퍼티는 `for..in`이나 `Object.keys()`에서 배제된다. 외부에서 실수로 접근하는 걸 막아준다.
+
+```js
+let id = Symbol("id");
+let user = {
+  name: "John",
+  age: 30,
+  [id]: 123
+};
+
+for (let key in user) alert(key); // name, age만 출력. 심볼은 안 보임
+
+alert(user[id]); // 123 - 직접 접근은 가능
+```
+
+`Object.assign`은 예외적으로 심볼 프로퍼티도 복사한다.
+
+### 전역 심볼
+
+`Symbol()`은 매번 다른 값을 만든다. 이름이 같은 심볼이 같은 값이길 원하면 `Symbol.for()`를 쓴다.
+
+```js
+let id = Symbol.for("id");       // 전역 레지스트리에 등록
+let idAgain = Symbol.for("id");  // 같은 이름 → 같은 심볼 반환
+
+alert(id === idAgain); // true
+```
+
+> 전역 심볼 레지스트리 (Global Symbol Registry)
+>
+> `Symbol.for(key)`로 심볼을 만들면 전역 레지스트리에 저장된다.
+> 같은 `key`로 다시 호출하면 새로 만들지 않고 기존 심볼을 반환한다.
+> 반대로 `Symbol.keyFor(sym)`을 쓰면 전역 심볼의 이름을 알 수 있다.
+
+### 시스템 심볼
+
+자바스크립트 내부에서 사용되는 심볼이다. `Symbol.iterator`, `Symbol.toPrimitive` 등이 있다. 나중에 관련 기능을 배울 때 다시 나온다.
+
+### 실무에서의 심볼
+
+실무에서 심볼을 직접 쓰는 경우는 많지 않다. 대부분 문자열 상수나 TypeScript의 enum으로 대체한다. "이런 게 있구나" 정도로 알고 넘어가면 충분하다.
