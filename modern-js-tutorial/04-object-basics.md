@@ -619,3 +619,113 @@ user.sayHi();
 > | this | 호출 방식에 따라 결정 (점 앞의 객체) | 자기 this 없음. 바깥 함수의 this를 가져옴 |
 >
 > 메서드 안에서 콜백을 쓸 때 화살표 함수가 편하다. 바깥의 `this`를 알아서 가져다 쓰니까.
+
+---
+
+## 06-constructor-new: new 연산자와 생성자 함수
+
+유사한 객체를 여러 개 만들어야 할 때, 객체 리터럴로 일일이 만들면 번거롭다. 생성자 함수와 `new`를 쓰면 간단하게 찍어낼 수 있다.
+
+### 생성자 함수
+
+생성자 함수는 일반 함수랑 기술적으로 차이가 없다. 두 가지 관례만 따른다.
+
+1. 함수 이름 첫 글자를 대문자로 쓴다
+2. 반드시 `new` 연산자를 붙여 호출한다
+
+```js
+function User(name) {
+  this.name = name;
+  this.isAdmin = false;
+}
+
+let user = new User("보라");
+
+alert(user.name);    // "보라"
+alert(user.isAdmin); // false
+```
+
+> 생성자 함수 (Constructor Function)
+>
+> `new`와 함께 호출하면 내부에서 자동으로 빈 객체를 만들고 `this`에 할당한 뒤, 마지막에 `this`를 반환하는 함수다.
+> 함수 자체가 특별한 게 아니라, `new`를 붙이느냐 안 붙이느냐에 따라 엔진이 다르게 처리하는 것이다.
+
+### new의 동작 원리
+
+`new User("보라")`를 호출하면 엔진이 이렇게 처리한다.
+
+```js
+function User(name) {
+  // 1. this = {} (빈 객체가 암시적으로 만들어짐)
+
+  // 2. 함수 본문 실행 - this에 프로퍼티 추가
+  this.name = name;
+  this.isAdmin = false;
+
+  // 3. return this (암시적으로 반환)
+}
+```
+
+결과적으로 아래 코드와 동일하다.
+
+```js
+let user = {
+  name: "보라",
+  isAdmin: false
+};
+```
+
+같은 구조의 객체가 필요할 때마다 `new User("호진")`, `new User("지민")` 이렇게 찍어내면 된다.
+
+### 같은 함수인데 new 유무에 따라 달라진다
+
+```js
+function User(name) {
+  this.name = name;
+}
+
+let user = new User("John");  // 생성자로 동작 - this = {} 만들고 반환
+let result = User("John");    // 일반 함수로 동작 - this = undefined (엄격 모드)
+```
+
+함수 자체가 생성자인 게 아니라, `new`를 붙이면 생성자로 동작하는 거다. 그래서 첫 글자를 대문자로 쓰는 관례가 중요하다. `new`를 붙여야 하는 함수라는 걸 사람이 알아볼 수 있게.
+
+### 생성자와 return
+
+생성자 함수에는 보통 `return`이 없다. `this`가 자동 반환되니까. 만약 `return`이 있으면:
+
+- 객체를 `return` → `this` 대신 그 객체가 반환됨
+- 원시형을 `return` → 무시됨 (그냥 `this` 반환)
+
+```js
+function BigUser() {
+  this.name = "원숭이";
+  return { name: "고릴라" }; // 객체를 반환 → this 무시
+}
+alert(new BigUser().name); // "고릴라"
+
+function SmallUser() {
+  this.name = "원숭이";
+  return; // 원시형 → 무시, this 반환
+}
+alert(new SmallUser().name); // "원숭이"
+```
+
+### 생성자 내 메서드
+
+프로퍼티만 넣는 게 아니라 메서드도 넣을 수 있다.
+
+```js
+function User(name) {
+  this.name = name;
+
+  this.sayHi = function() {
+    alert("제 이름은 " + this.name + "입니다.");
+  };
+}
+
+let bora = new User("이보라");
+bora.sayHi(); // "제 이름은 이보라입니다."
+```
+
+나중에 배울 `class` 문법으로도 같은 걸 할 수 있다. `class`는 생성자 함수를 더 깔끔하게 쓸 수 있는 문법이다.
