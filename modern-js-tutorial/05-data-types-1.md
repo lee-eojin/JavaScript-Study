@@ -165,3 +165,141 @@ Math.max(3, 5, 1)  // 5
 Math.min(3, 5, 1)  // 1
 Math.pow(2, 10)    // 1024 (2의 10제곱)
 ```
+
+---
+
+## 03-string: 문자열
+
+자바스크립트에서 문자열은 UTF-16 형식으로 인코딩된다. 글자 하나만 저장하는 별도의 자료형은 없고, 길이에 상관없이 전부 문자열이다.
+
+### 따옴표
+
+```js
+let single = '작은따옴표';
+let double = "큰따옴표";
+let backtick = `백틱`;
+```
+
+작은따옴표와 큰따옴표는 차이가 없다. 백틱은 `${}`로 표현식을 삽입할 수 있고, 여러 줄 문자열도 가능하다.
+
+```js
+let name = "John";
+alert(`Hello, ${name}!`); // "Hello, John!"
+
+let list = `손님:
+ * John
+ * Pete`;
+```
+
+> 템플릿 리터럴 (Template Literal)
+>
+> 백틱으로 감싼 문자열이다. `${표현식}`으로 값을 삽입할 수 있다.
+
+### 특수 문자
+
+| 문자 | 설명 |
+|---|---|
+| `\n` | 줄 바꿈 |
+| `\t` | 탭 |
+| `\\` | 역슬래시 자체 |
+| `\'`, `\"` | 따옴표 |
+
+```js
+let str = "Hello\nWorld";
+// Hello
+// World
+```
+
+### length
+
+문자열의 길이를 나타내는 프로퍼티다. 함수가 아니라 괄호를 붙이지 않는다.
+
+```js
+alert("Hello".length); // 5
+alert("My\n".length);  // 3 - \n은 특수문자 하나
+```
+
+### 특정 글자 접근
+
+대괄호 `[]`로 접근한다. 인덱스는 0부터 시작한다.
+
+```js
+let str = "Hello";
+
+alert(str[0]);              // "H"
+alert(str[str.length - 1]); // "o" - 마지막 글자
+alert(str[1000]);           // undefined - 없는 위치
+```
+
+`for..of`로 글자 하나씩 순회할 수 있다.
+
+```js
+for (let char of "Hello") {
+  alert(char); // H, e, l, l, o
+}
+```
+
+### 문자열의 불변성
+
+문자열은 수정할 수 없다. 글자 하나를 바꾸는 게 불가능하다.
+
+```js
+let str = "Hi";
+str[0] = "h"; // Error!
+
+// 새 문자열을 만들어서 할당해야 한다
+str = "h" + str[1]; // "hi"
+```
+
+### 대소문자 변경
+
+```js
+alert("Interface".toUpperCase()); // "INTERFACE"
+alert("Interface".toLowerCase()); // "interface"
+alert("Interface"[0].toLowerCase()); // "i" - 글자 하나만 변경도 가능
+```
+
+### 부분 문자열 찾기
+
+```js
+// includes - 포함 여부 (true/false)
+alert("Widget with id".includes("Widget")); // true
+alert("Hello".includes("Bye"));             // false
+
+// startsWith, endsWith - 시작/끝 여부
+alert("Widget".startsWith("Wid")); // true
+alert("Widget".endsWith("get"));   // true
+
+// indexOf - 위치 반환 (없으면 -1)
+alert("Widget with id".indexOf("id")); // 1
+alert("Widget with id".indexOf("xy")); // -1
+```
+
+> includes vs indexOf
+>
+> 포함 여부만 알면 되면 `includes`, 위치가 필요하면 `indexOf`.
+> `indexOf`를 `if`문에 쓸 때 주의: 위치 `0`을 반환하면 `false`로 취급되므로 `!= -1`로 비교해야 한다.
+
+### 부분 문자열 추출 - slice
+
+세 가지 메서드(`slice`, `substring`, `substr`)가 있지만 `slice`만 알면 된다.
+
+```js
+let str = "stringify";
+
+alert(str.slice(0, 5));  // "strin" - 0부터 5 미만
+alert(str.slice(2));     // "ringify" - 2부터 끝까지
+alert(str.slice(-4, -1)); // "gif" - 음수는 뒤에서부터
+```
+
+> str.slice(start, end)
+>
+> `start`부터 `end` 미만까지의 부분 문자열을 반환한다.
+> `end` 생략 시 끝까지. 음수를 넣으면 뒤에서부터 센다.
+
+### 기타 유용한 메서드
+
+```js
+"  Hello  ".trim()  // "Hello" - 앞뒤 공백 제거
+"ha".repeat(3)      // "hahaha" - 반복
+```
